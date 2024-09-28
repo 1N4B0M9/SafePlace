@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/user-attachments/assets/602d405c-10cc-446f-a527-82baf602420e" alt="logo_updated" width="200">
+ <img src="https://github.com/user-attachments/assets/76c814c5-3bb1-4197-a68d-160bc0ac1bf7" alt="logo_updated_v2" width="200">
 </p>
 
   **[Name]**
@@ -14,8 +14,8 @@
 &nbsp;
 
 # Challenges we faced
-  We were really sleepy.
-  ---
+**  We were really sleepy.
+**  ---
 &nbsp;
 
   See something, say something.
