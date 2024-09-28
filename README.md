@@ -5,4 +5,4 @@
   
 
 # Challenges we faced
-![dudes](https://github.com/user-attachments/assets/9085881d-e38f-40dc-9e4d-036a93c73cea)
+![Asset 2](https://github.com/user-attachments/assets/77f54ed4-825a-4cb9-ad1a-b7a20dd8ec2e)
