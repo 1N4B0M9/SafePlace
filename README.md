@@ -5,4 +5,4 @@
   
 
 # Challenges we faced
-  <img src="assets/dude.jpg" style="width:60%;"/>
+ ![Alt text](relative%20path/to/dude.jpg?raw=true "Title")
