@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Report Hate Crime on Map</title>
+    <style>
+      /* Set the size of the map */
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+
+      /* Basic styling for the form */
+      #crime-form {
+        display: none;
+        margin-top: 10px;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
+    <script>
+      let map;
+      let selectedLocation = null;
+
+      function initMap() {
+        const centerCoords = { lat: 40.7128, lng: -74.0060 }; // Default center (NYC)
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 12,
+          center: centerCoords,
+        });
+
+        // Listen for clicks on the map
+        map.addListener("click", function(event) {
+          if (selectedLocation) {
+            selectedLocation.setMap(null); // Remove previous marker if it exists
+          }
+
+          // Place a new marker at the clicked location
+          selectedLocation = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+          });
+
+          // Update hidden form fields with coordinates
+          document.getElementById('lat').value = event.latLng.lat();
+          document.getElementById('lng').value = event.latLng.lng();
+
+          // Show the form
+          document.getElementById('crime-form').style.display = 'block';
+        });
+      }
+
+      function submitCrime() {
+        // Get the values from the form
+        const lat = document.getElementById('lat').value;
+        const lng = document.getElementById('lng').value;
+        const description = document.getElementById('description').value;
+        const date = document.getElementById('date').value;
+
+        // Ideally, here you would send the data to your backend to save it in a database.
+        console.log('Hate crime reported:', {
+          lat: lat,
+          lng: lng,
+          description: description,
+          date: date
+        });
+
+        // Clear form and hide it
+        document.getElementById('crime-form').reset();
+        document.getElementById('crime-form').style.display = 'none';
+      }
+    </script>
+  </head>
+  <body>
+    <h3>Report Hate Crime</h3>
+    <div id="map"></div>
+
+    <!-- Form to report hate crime -->
+    <div id="crime-form">
+      <h4>Report Hate Crime at Selected Location</h4>
+      <form onsubmit="event.preventDefault(); submitCrime();">
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <!-- Hidden fields to store coordinates -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lng" name="lng">
+
+        <button type="submit">Submit Report</button>
+      </form>
+    </div>
+  </body>
+</html>
