@@ -15,6 +15,7 @@
         margin-top: 10px;
       }
     </style>
+
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
     <script>
       let map;
@@ -47,33 +48,38 @@
           document.getElementById('crime-form').style.display = 'block';
         });
       }
-
       function submitCrime() {
-        // Get the values from the form
-        const lat = document.getElementById('lat').value;
-        const lng = document.getElementById('lng').value;
-        const description = document.getElementById('description').value;
-        const date = document.getElementById('date').value;
-        const category = document.getElementById('category').value;
+    const reportData = {
+      description: document.getElementById('description').value,
+      date: document.getElementById('date').value,
+      category: document.getElementById('category').value,
+      lat: document.getElementById('lat').value,
+      lng: document.getElementById('lng').value,
+    };
 
-        if (!lat || !lng || !description || !date || !category) {
-          alert("Please fill in all fields before submitting.");
-          return;
-        }
-
-        // Ideally, here you would send the data to your backend to save it in a database.
-        console.log('Hate crime reported:', {
-          lat: lat,
-          lng: lng,
-          description: description,
-          date: date,
-          category: category
-        });
-
-        // Clear form and hide it
-        document.getElementById('crime-form').reset();
-        document.getElementById('crime-form').style.display = 'none';
+    fetch('/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reportData),
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      // Reset the form and hide it
+      document.getElementById('crime-form').reset();
+      document.getElementById('crime-form').style.display = 'none';
+      if (selectedLocation) {
+        selectedLocation.setMap(null); // Remove marker after submission
+        selectedLocation = null;
       }
+    })
+    .catch(error => {
+      console.error('Error submitting report:', error);
+    });
+  }
+  
     </script>
   </head>
   <body>
@@ -109,6 +115,7 @@
 
 
       </form>
+
     </div>
   </body>
 </html>
