@@ -5,4 +5,4 @@
   
 
 # Challenges we faced
-![dude](https://github.com/user-attachments/assets/11fc40d9-b7d6-4c9f-8725-5dd1235bbb90)
+![dude](https://github.com/user-attachments/assets/11fc40d9-b7d6-4c9f-8725-5dd1235bbb90 =250x250)
