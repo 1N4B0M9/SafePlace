@@ -58,7 +58,42 @@
           styles: customMapStyle,
           streetViewControl: false
         });
+       // Fetch reports and plot markers
+       fetch('/reports')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(reports => {
+                    reports.forEach(report => {
+                        const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
+                        const marker = new google.maps.Marker({
+                            position: position,
+                            map: map,
+                            title: report.description // Tooltip on marker
+                        });
 
+                        // Create an InfoWindow for the marker
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: `<div>
+                                <strong>Description:</strong> ${report.description}<br>
+                                <strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}<br>
+                                <strong>Category:</strong> ${report.category}<br>
+                                <strong>Location:</strong> (${report.lat}, ${report.lng})
+                            </div>`
+                        });
+
+                        // Add a click listener to the marker to open the InfoWindow
+                        marker.addListener('click', () => {
+                            infoWindow.open(map, marker);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching reports:', error);
+                });
         // Listen for clicks on the map
         map.addListener("click", function(event) {
           if (selectedLocation) {
