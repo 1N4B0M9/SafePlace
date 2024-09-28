@@ -5,4 +5,4 @@
   
 
 # Challenges we faced
-<img src="[https://github.com/favicon.ico](https://github.com/user-attachments/assets/11fc40d9-b7d6-4c9f-8725-5dd1235bbb90)>
+![dude-removebg-preview](https://github.com/user-attachments/assets/6dcc008e-c0ce-4097-ba1f-08df8366a26c)
