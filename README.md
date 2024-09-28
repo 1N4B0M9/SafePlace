@@ -1,3 +1,5 @@
+<img width="380" alt="Asset 1@2x" src="https://github.com/user-attachments/assets/9ee319ed-c013-4ae7-9b27-91bab61138dc">
+
   **[Name]** convenient website that allows users to report any crime. Utilizing Geoolocation, the website marks the location that the user desires then prompts for the user to fill in more information.
 ---
 
