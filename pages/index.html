@@ -3,9 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Incident Report</title>
 </head>
 <body>
-    
+    <h1>Report an Incident</h1>
+    <form id="incidentForm">
+        <label for="location">Location:</label>
+        <input type="text" id="location" required>
+        <br>
+        <label for="incident">Incident Description:</label>
+        <textarea id="incident" required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('incidentForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const location = document.getElementById('location').value;
+            const incident = document.getElementById('incident').value;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/incidents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ location, incident }),
+                });
+                const data = await response.json();
+                alert('Incident reported: ' + JSON.stringify(data));
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to report incident.');
+            }
+        });
+    </script>
 </body>
 </html>
