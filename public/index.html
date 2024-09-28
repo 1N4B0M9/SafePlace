@@ -22,10 +22,41 @@
       let selectedLocation = null;
 
       function initMap() {
+        
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
+
+        // Map style
+        const customMapStyle = [ 
+          {
+            "elementType": "geometry",
+            "stylers": [{ "color": "#2d2d2d" }] // Background land color
+          },
+          {
+            "elementType": "labels.text.fill",
+            "stylers": [{ "color": "#000000" }] // Labels color using your specified hex
+          },
+          {
+            "featureType": "road",
+            "elementType": "geometry",
+            "stylers": [{ "color": "#F1C40F" }] // Road color
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry.fill",
+            "stylers": [{ "color": "#1d2c4d" }] // Water color
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [{ "color": "#383838" }] // Parks color
+          }
+        ];
+
         map = new google.maps.Map(document.getElementById("map"), {
           zoom: 12,
           center: centerCoords,
+          styles: customMapStyle,
+          streetViewControl: false
         });
 
         // Listen for clicks on the map
