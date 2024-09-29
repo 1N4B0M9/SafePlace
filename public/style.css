@@ -120,7 +120,27 @@ a:hover:after {
     box-sizing: border-box;
 }
 
-#input[type="date"]{
+#date[type="date"]{
+    background-color: #2d2d2d;
+    padding: 3px;
+    position: absolute;
+    font-family: "Roboto Mono",monospace;
+    color: #B36900;
+    font-size: 15px;
+    border: 2px solid #B36900;
+    outline: none;
+    border-radius: 5px;
+}
+#description{
+    border: 2px solid #B36900;
+    border-radius: 4px;
+    background-color: #2d2d2d;
+    color: #B36900;
+    padding: 3px;
+    font-size: 15;
+
+}
+#category{
     background-color: #2d2d2d;
     padding: 3px;
     position: absolute;

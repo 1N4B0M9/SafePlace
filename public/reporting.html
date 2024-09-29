@@ -12,7 +12,7 @@
 
       /* form style */
       #crime-form {
-        display: block;
+        display: none;
         margin-top: 10px;
       }
 
@@ -93,7 +93,7 @@
           document.getElementById('lng').value = event.latLng.lng();
 
           // Show the form
-          //document.getElementById('crime-form').style.display = 'block';
+          document.getElementById('crime-form').style.display = 'block';
 
         });
       }
@@ -150,13 +150,13 @@
     <div id="crime-form">
         <form onsubmit="event.preventDefault(); submitCrime();">
           <label for="description" id="descriptionTitle">Description:</label>
-          <input type="text" id="input" name="description" required><br><br>
+          <input type="text" id = "description" name="description" required><br><br>
   
           <label for="date" id="descriptionTitle">Date:&nbsp;</label>
-          <input type="date" id="input" name="date" required><br><br>
+          <input type="date" id="date" name="date" required><br><br>
   
           <label for="category" id="descriptionTitle">Category:</label>
-          <select id="input" name="category" required>
+          <select id="category" name="category" required>
             <option value="" disabled selected>Select a category</option>
             <option value="Race">Race</option>
             <option value="Religion">Religion</option>
