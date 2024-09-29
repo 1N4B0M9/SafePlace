@@ -43,7 +43,7 @@ li {
     margin-left: 20px;
 }
 
-a  {
+a  { /*fix this shit*/
     display: block;
     padding: 10px;
     font-size: 18px;
@@ -104,10 +104,10 @@ a:hover:after {
 }
 
 #input{
-    border: 2px solid #fda300;
+    border: 2px solid #B36900;
     border-radius: 4px;
     background-color: #2d2d2d;
-    color: #fda300;
+    color: #B36900;
     padding: 3px;
     font-size: 15;
 }
@@ -125,18 +125,18 @@ a:hover:after {
     padding: 3px;
     position: absolute;
     font-family: "Roboto Mono",monospace;
-    color: #fda300;
+    color: #B36900;
     font-size: 15px;
-    border: 2px solid #fda300;
+    border: 2px solid #B36900;
     outline: none;
     border-radius: 5px;
 }
 
 #inputSubmit {
-    border: 2px solid #fda300;
+    border: 2px solid #B36900;
     border-radius: 4px;
     background-color: #2d2d2d;
-    color: #fda300;
+    color: #B36900;
     padding: 3px;
     font-size: 15;
     margin-bottom: 35px;
@@ -144,7 +144,23 @@ a:hover:after {
 }
 
 ::-webkit-calendar-picker-indicator{
-    background-color: #fda300;
+    background-color: #B36900;
     cursor: pointer;
     border-radius: 10px;
 }
+
+#descriptionTitle {
+    color: #B36900;
+}
+
+.gm-style-cc {
+    display: none !important;
+}
+
+iframe {
+    pointer-events: none; /* Prevent interaction with the iframe */
+  }
+  
+  a[href^="https://maps.google.com/maps"] {
+    display: none !important; /* Hide the Google logo link */
+  }
