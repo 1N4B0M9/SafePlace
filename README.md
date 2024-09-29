@@ -5,6 +5,11 @@
 <div align="center">
  
 # Harmony Watch
+Emails: 
+Nathan Morelli - nbm27@pitt.edu
+Aaron Zheng - aaz50@pitt.edu
+Xavier Hilmey - xrh1@pitt.edu
+Goldium Wu - gow4@pitt.edu
 </div>
 
 ### &nbsp;&nbsp;&nbsp;Aaron, Nathan, Goldi, and Xavier present Harmony Watch, a convenient and pleasant website to report any incident in the city of Pittsburgh and beyond. 
