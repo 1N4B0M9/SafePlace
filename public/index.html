@@ -3,6 +3,8 @@
   <head>
     <title>Guardian Pin</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
+    <link rel="stylesheet" href="style.css">
+
     <style>
       /* map size */
       html, body {
@@ -203,27 +205,7 @@
                 });
               
 
-        // Listen for clicks on the map
-        map.addListener("click", function(event) {
-          if (selectedLocation) {
-            selectedLocation.setMap(null); // Remove previous marker if it exists
-          }
-
-          // Place a new marker at the clicked location
-          selectedLocation = new google.maps.Marker({
-            position: event.latLng,
-            map: map,
-          });
-         
-
-          // Update hidden form fields with coordinates
-          document.getElementById('lat').value = event.latLng.lat();
-          document.getElementById('lng').value = event.latLng.lng();
-
-          // Show the form
-          document.getElementById('crime-form').style.display = 'block';
-
-        });
+        
       }
     
       function submitCrime() {
