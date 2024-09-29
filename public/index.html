@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Report Hate Crime on Map</title> 
-
+    <title>Guardian Pin</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
     <style>
       /* map size */
@@ -205,10 +204,60 @@
               
 
         // Listen for clicks on the map
-       
+        map.addListener("click", function(event) {
+          if (selectedLocation) {
+            selectedLocation.setMap(null); // Remove previous marker if it exists
+          }
+
+          // Place a new marker at the clicked location
+          selectedLocation = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+          });
+         
+
+          // Update hidden form fields with coordinates
+          document.getElementById('lat').value = event.latLng.lat();
+          document.getElementById('lng').value = event.latLng.lng();
+
+          // Show the form
+          document.getElementById('crime-form').style.display = 'block';
+
+        });
       }
     
-    
+      function submitCrime() {
+    const reportData = {
+      description: document.getElementById('description').value,
+      date: document.getElementById('date').value,
+      category: document.getElementById('category').value,
+      lat: document.getElementById('lat').value,
+      lng: document.getElementById('lng').value,
+    };
+
+    fetch('/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reportData),
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      // Reset the form and hide it
+      document.getElementById('crime-form').reset();
+      document.getElementById('crime-form').style.display = 'none';
+      if (selectedLocation) {
+        selectedLocation.setMap(null); // Remove marker after submission
+        selectedLocation = null;
+      }
+    })
+    .catch(error => {
+      console.error('Error submitting report:', error);
+    });
+  }
+  
     </script>
   </head>
   <body>
