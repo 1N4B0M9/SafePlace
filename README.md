@@ -4,7 +4,6 @@
 <div style="text-align: center; font-weight: bold; font-size: 3rem;">
     Harmony Watch
 </div>
-</div>
 
 ### Aaron, Nathan, Goldi, and Xavier present Harmony Watch, a convenient and pleasant website to report any incident in the city of Pittsburgh and beyond. 
 ---
