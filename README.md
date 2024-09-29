@@ -22,6 +22,7 @@ Goldium Wu - gow4@pitt.edu
 &nbsp;
 
 ## How we built it
+We developed Harmony Watch using HTML, CSS, and JavaScript for a responsive front end, leveraging the Google Maps API for dynamic mapping features. MongoDB serves as our backend database, securely storing and retrieving hate crime reports. We used GitHub to manage individual contributions and integrate the team's work.
 &nbsp;
 
 ## Challenges we faced and how we tackled it
