@@ -6,42 +6,47 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-      /* map size */
+      /* General body and html styles */
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+        color: #fda300;
       }
 
+      /* Navigation bar container */
+      .nav-container {
+        height: 80px;
+        background-color: #102030;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+      }
 
+      /* Navigation links */
+      .nav-container a {
+        color: #fda300;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      .right-links {
+        display: flex;
+        gap: 15px;
+      }
+
+      /* Map container that takes up the remaining screen space below the nav bar */
       #map {
-        height: 100%;
-        width: 100%;
         position: absolute;
-        top: 0;
+        top: 80px; /* Leaves space for the navigation bar */
         left: 0;
+        right: 0;
+        bottom: 0;
       }
 
-      /* form style */
-      #crime-form {
-        display: none;
-        margin-top: 10px;
-      }
-
-      body {
-            background-color: #153040;
-            color: #fda300;
-            font-family: 'Poppins', sans-serif;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-      
-      #title {
-          font-size: 3rem;
-          font-weight: black;
-      }
       /* Legend styles */
       #legend {
         background-color: #fff;
@@ -72,18 +77,14 @@
         border-radius: 50%;
         margin-right: 10px;
       }
-      
     </style>
 
-
-
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
     <script>
       let map;
       let selectedLocation = null;
 
       function initMap() {
-        
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
 
         // Map style
@@ -121,6 +122,7 @@
           mapTypeControl: false,
           fullscreenControl: false
         });
+
         const legend = document.createElement('div');
         legend.id = 'legend';
         legend.style.backgroundColor = '#383838';
@@ -138,131 +140,77 @@
 
         // Fetch reports and plot markers
        fetch('/reports')
-              .then(response => {
-                  if (!response.ok) {
-                      throw new Error('Network response was not ok');
-                  }
-                  return response.json();
-                })
-                .then(reports => {
-                    reports.forEach(report => {
-                        const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
-                        
-                        let markerColor;
-                        switch (report.category) {
-                          case 'Race':
-                            markerColor = '#F1c40F';
-                            break;
-                          case 'Religion':
-                            markerColor = '#FF5733';
-                            break;
-                          case 'Gender Identity':
-                            markerColor = '#8E44AD';
-                            break;
-                          case 'Sexual Orientation':
-                            markerColor = '#3498DB';
-                            break;
-                          case 'Ethnicity':
-                            markerColor = '#27AE60';
-                            break;
-                          case 'Disability':
-                            markerColor = '#E67E22';
-                            break;
-                          default:
-                            markerColor = '#000000'
-                        }
+          .then(response => response.json())
+          .then(reports => {
+            reports.forEach(report => {
+              const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
+              let markerColor;
 
-                        const marker = new google.maps.Marker({
-                            position: position,
-                            map: map,
-                            icon: {
-                              path: google.maps.SymbolPath.CIRCLE,
-                              scale: 8,
-                              fillColor: markerColor,
-                              fillOpacity: 1,
-                              fillOpacity: 1,
-                              strokeWeight: 1,
-                              strokeColor: '#FFFFFF'
+              switch (report.category) {
+                case 'Race':
+                  markerColor = '#F1c40F';
+                  break;
+                case 'Religion':
+                  markerColor = '#FF5733';
+                  break;
+                case 'Gender Identity':
+                  markerColor = '#8E44AD';
+                  break;
+                case 'Sexual Orientation':
+                  markerColor = '#3498DB';
+                  break;
+                case 'Ethnicity':
+                  markerColor = '#27AE60';
+                  break;
+                case 'Disability':
+                  markerColor = '#E67E22';
+                  break;
+                default:
+                  markerColor = '#000000';
+              }
 
-                            },
-                            title: report.description // Tooltip on marker
-                        });
+              const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 8,
+                  fillColor: markerColor,
+                  fillOpacity: 1,
+                  strokeWeight: 1,
+                  strokeColor: '#FFFFFF'
+                },
+                title: report.description // Tooltip on marker
+              });
 
-                        // Create an InfoWindow for the marker
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `<div>
-                                <strong>Description:</strong> ${report.description}<br>
-                                <strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}<br>
-                                <strong>Category:</strong> ${report.category}<br>
-                                <strong>Location:</strong> (${report.lat}, ${report.lng})
-                            </div>`
-                        });
+              const infoWindow = new google.maps.InfoWindow({
+                content: `<div>
+                  <strong>Description:</strong> ${report.description}<br>
+                  <strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}<br>
+                  <strong>Category:</strong> ${report.category}<br>
+                  <strong>Location:</strong> (${report.lat}, ${report.lng})
+                </div>`
+              });
 
-                        // Add a click listener to the marker to open the InfoWindow
-                        marker.addListener('click', () => {
-                            infoWindow.open(map, marker);
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching reports:', error);
-                });
-              
-
-        
+              marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+              });
+            });
+          })
+          .catch(error => console.error('Error fetching reports:', error));
       }
-    
-      function submitCrime() {
-    const reportData = {
-      description: document.getElementById('description').value,
-      date: document.getElementById('date').value,
-      category: document.getElementById('category').value,
-      lat: document.getElementById('lat').value,
-      lng: document.getElementById('lng').value,
-    };
-
-    fetch('/report', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reportData),
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-      // Reset the form and hide it
-      document.getElementById('crime-form').reset();
-      document.getElementById('crime-form').style.display = 'none';
-      if (selectedLocation) {
-        selectedLocation.setMap(null); // Remove marker after submission
-        selectedLocation = null;
-      }
-    })
-    .catch(error => {
-      console.error('Error submitting report:', error);
-    });
-  }
-  
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
-
-
   </head>
   <body>
     <div class="nav-container">
+      <a href="/">Home</a>
       <div class="right-links">
-          <a href="reports.html">Directories</a>
-          <a href="reporting.html" id="reportButton">Report</a>
+        <a href="reports.html">Directories</a>
+        <a href="reports.html" id="reportButton">Report</a>
       </div>
-  </div>
-
-
+    </div>
 
     <div id="map"></div>
-
-    <!-- Form to report hate crime -->
-   
-    </div>
+    <h3>Loading...</h3>
   </body>
 </html>
