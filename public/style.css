@@ -96,4 +96,56 @@ a:hover:after {
 /*#map{
     z-index: -1;
 }
-    *./
+    */
+
+#descriptionTitle {
+    font-weight: 400;
+    font-size: 25px;
+    margin-left: 10px;
+}
+
+#input{
+    border: 2px solid #fda300;
+    border-radius: 4px;
+    background-color: #2d2d2d;
+    color: #fda300;
+    padding: 3px;
+    font-size: 15;
+}
+
+*,
+*:before,
+*:after{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#input[type="date"]{
+    background-color: #2d2d2d;
+    padding: 3px;
+    position: absolute;
+    font-family: "Roboto Mono",monospace;
+    color: #fda300;
+    font-size: 15px;
+    border: 2px solid #fda300;
+    outline: none;
+    border-radius: 5px;
+}
+
+#inputSubmit {
+    border: 2px solid #fda300;
+    border-radius: 4px;
+    background-color: #2d2d2d;
+    color: #fda300;
+    padding: 3px;
+    font-size: 15;
+    margin-bottom: 35px;
+    margin-left: 10px;
+}
+
+::-webkit-calendar-picker-indicator{
+    background-color: #fda300;
+    cursor: pointer;
+    border-radius: 10px;
+}

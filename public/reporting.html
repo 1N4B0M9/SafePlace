@@ -150,14 +150,14 @@
     <h3 id="title">Report Hate Crime at Selected Location</h3>
     <div id="crime-form">
         <form onsubmit="event.preventDefault(); submitCrime();">
-          <label for="description">Description:</label>
-          <input type="text" id="description" name="description" required><br><br>
+          <label for="description" id="descriptionTitle">Description:</label>
+          <input type="text" id="input" name="description" required><br><br>
   
-          <label for="date">Date:</label>
-          <input type="date" id="date" name="date" required><br><br>
+          <label for="date" id="descriptionTitle">Date:&nbsp;</label>
+          <input type="date" id="input" name="date" required><br><br>
   
-          <label for="category">Category:</label>
-          <select id="category" name="category" required>
+          <label for="category" id="descriptionTitle">Category:</label>
+          <select id="input" name="category" required>
             <option value="" disabled selected>Select a category</option>
             <option value="Race">Race</option>
             <option value="Religion">Religion</option>
@@ -171,7 +171,7 @@
           <input type="hidden" id="lat" name="lat">
           <input type="hidden" id="lng" name="lng">
   
-          <button type="submit">Submit Report</button>
+          <button type="submit" id="inputSubmit" >Submit Report</button>
   
   
         </form>
