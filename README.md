@@ -15,8 +15,8 @@
 # How we built it
 &nbsp;
 
-# Challenges we faced
-We were really sleepy.
+# Challenges we faced and how we tackled it
+We were really sleepy—— caffeine
 
 &nbsp;
 
