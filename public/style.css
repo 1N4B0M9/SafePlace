@@ -1,6 +1,5 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
     /*background: linear-gradient(to right, blue, rgba(0, 0, 0, 0)), url(https://grainy-gradients.vercel.app/noise.svg);*/
     background-color: #2d2d2d;
     color: #fda300;
@@ -28,9 +27,10 @@ li {
 / nav bar buttons */
 .nav-container {
     display: flex; 
+    background-color: #102030;
     justify-content: space-between; 
     align-items: center; 
-    padding: 10px;
+    padding: 20px;
 
 }
 
@@ -43,7 +43,7 @@ li {
     margin-left: 20px;
 }
 
-a {
+a  {
     display: block;
     padding: 10px;
     font-size: 18px;

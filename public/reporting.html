@@ -12,7 +12,7 @@
 
       /* form style */
       #crime-form {
-        display: none;
+        display: block;
         margin-top: 10px;
       }
 
@@ -93,7 +93,7 @@
           document.getElementById('lng').value = event.latLng.lng();
 
           // Show the form
-          document.getElementById('crime-form').style.display = 'block';
+          //document.getElementById('crime-form').style.display = 'block';
 
         });
       }
@@ -125,7 +125,6 @@
         selectedLocation = null;
 
       }
-      window.location.href = 'index.html';
 
 
     })
