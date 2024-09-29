@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
+<<<<<<< Updated upstream
     <title>Guardian Pin</title>
+=======
+    <title>Report Hate Crime on Map</title> 
+    <link rel="stylesheet" href="./style.css">
+>>>>>>> Stashed changes
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
     <style>
       /* map size */
@@ -21,12 +26,42 @@
             color: #fda300;
             font-family: 'Poppins', sans-serif;
             font-weight: bold;
-            font-size: 2rem;
+            font-size: 0.8rem;
         }
       
       #title {
           font-size: 3rem;
           font-weight: black;
+      }
+      /* Legend styles */
+      #legend {
+        background-color: #fff;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 8px;
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      #legend h4 {
+        margin: 0;
+        padding-bottom: 5px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+
+      .legend-color {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-right: 10px;
       }
       
     </style>
@@ -74,20 +109,70 @@
           streetViewControl: false,
           mapTypeControl: false
         });
-       // Fetch reports and plot markers
+        const legend = document.createElement('div');
+        legend.id = 'legend';
+        legend.style.backgroundColor = '#383838';
+        legend.innerHTML = `
+        <h4>Legend</h4>
+        <div class="legend-item"><span class="legend-color" style="background-color: #F1C40F;"></span>Race</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: #FF5733;"></span>Religion</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: #8E44AD;"></span>Gender Identity</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: #3498DB;"></span>Sexual Orientation</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: #27AE60;"></span>Ethnicity</div>
+        <div class="legend-item"><span class="legend-color" style="background-color: #E67E22;"></span>Disability</div>
+       `;
+
+       map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+
+        // Fetch reports and plot markers
        fetch('/reports')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.json();
                 })
                 .then(reports => {
                     reports.forEach(report => {
                         const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
+                        
+                        let markerColor;
+                        switch (report.category) {
+                          case 'Race':
+                            markerColor = '#F1c40F';
+                            break;
+                          case 'Religion':
+                            markerColor = '#FF5733';
+                            break;
+                          case 'Gender Identity':
+                            markerColor = '#8E44AD';
+                            break;
+                          case 'Sexual Orientation':
+                            markerColor = '#3498DB';
+                            break;
+                          case 'Ethnicity':
+                            markerColor = '#27AE60';
+                            break;
+                          case 'Disability':
+                            markerColor = '#E67E22';
+                            break;
+                          default:
+                            markerColor = '#000000'
+                        }
+
                         const marker = new google.maps.Marker({
                             position: position,
                             map: map,
+                            icon: {
+                              path: google.maps.SymbolPath.CIRCLE,
+                              scale: 8,
+                              fillColor: markerColor,
+                              fillOpacity: 1,
+                              fillOpacity: 1,
+                              strokeWeight: 1,
+                              strokeColor: '#FFFFFF'
+
+                            },
                             title: report.description // Tooltip on marker
                         });
 
@@ -110,6 +195,8 @@
                 .catch(error => {
                     console.error('Error fetching reports:', error);
                 });
+              
+
         // Listen for clicks on the map
         map.addListener("click", function(event) {
           if (selectedLocation) {
