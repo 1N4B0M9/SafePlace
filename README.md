@@ -21,7 +21,6 @@
 
 ## Challenges we faced and how we tackled it
 -We were really sleepy—— caffeine
--Heat map integration
 &nbsp;
 
  <div style="text-align: center;" align="center">
