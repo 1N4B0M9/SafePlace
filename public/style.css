@@ -1,17 +1,92 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    background-color: #153040;
+    color: #fda300;
 }
+
 h2 {
     text-align: center;
+    font-size: 60px;
 }
+
+
 ul {
     list-style-type: none;
     padding: 0;
 }
+
+/* report list */
 li {
-    border: 1px solid #ccc;
+    border: 1px solid red;
     border-radius: 4px;
     margin: 10px 0;
     padding: 10px;
+}
+
+/* nav bar buttons */
+.nav-container {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.right-links {
+    display: flex; 
+    margin-left: auto;
+}
+
+.right-links a {
+    margin-left: 20px;
+}
+
+a {
+    display: block;
+    padding: 10px;
+    font-size: 18px;
+    font-family: sans-serif;
+    text-decoration: none;
+    color: #fda300;
+    border: 2px solid #fda300;
+    border-radius: 8px;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all .35s;
+}
+
+a span {
+    position: relative;
+    z-index: 2;
+}
+
+a:after {
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: #ffc619;
+    transition: all .35s;
+    z-index: 1;
+}
+
+a:hover {
+    color: red;
+}
+
+a:hover:after {
+    width: 100%;
+}
+
+#reportButton {
+    border-color: red;
+    color: red;
+}
+
+#reportButton:after {
+    background: red; 
 }
