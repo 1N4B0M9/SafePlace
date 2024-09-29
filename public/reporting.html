@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Report</title>
+    <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
+    <style>
+      /* map size */
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+
+      /* form style */
+      #crime-form {
+        display: none;
+        margin-top: 10px;
+      }
+
+      body {
+            background-color: #153040;
+            color: #fda300;
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+      
+      #title {
+          font-size: 3rem;
+          font-weight: black;
+      }
+      
+    </style>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
+    <script>
+      let map;
+      let selectedLocation = null;
+
+      function initMap() {
+        
+        const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
+
+        // Map style
+        const customMapStyle = [ 
+          {
+            "elementType": "geometry",
+            "stylers": [{ "color": "#2d2d2d" }] // Background land color
+          },
+          {
+            "elementType": "labels.text.fill",
+            "stylers": [{ "color": "#000000" }] // Labels color using your specified hex
+          },
+          {
+            "featureType": "road",
+            "elementType": "geometry",
+            "stylers": [{ "color": "#F1C40F" }] // Road color
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry.fill",
+            "stylers": [{ "color": "#1d2c4d" }] // Water color
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [{ "color": "#383838" }] // Parks color
+          }
+        ];
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 12,
+          center: centerCoords,
+          styles: customMapStyle,
+          streetViewControl: false,
+          mapTypeControl: false
+        });       
+        // Listen for clicks on the map
+        map.addListener("click", function(event) {
+          if (selectedLocation) {
+            selectedLocation.setMap(null); // Remove previous marker if it exists
+          }
+
+          // Place a new marker at the clicked location
+          selectedLocation = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+          });
+         
+
+          // Update hidden form fields with coordinates
+          document.getElementById('lat').value = event.latLng.lat();
+          document.getElementById('lng').value = event.latLng.lng();
+
+          // Show the form
+          document.getElementById('crime-form').style.display = 'block';
+
+        });
+      }
+    
+      function submitCrime() {
+    const reportData = {
+      description: document.getElementById('description').value,
+      date: document.getElementById('date').value,
+      category: document.getElementById('category').value,
+      lat: document.getElementById('lat').value,
+      lng: document.getElementById('lng').value,
+    };
+
+    fetch('/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reportData),
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message);
+      // Reset the form and hide it
+      document.getElementById('crime-form').reset();
+      document.getElementById('crime-form').style.display = 'none';
+      if (selectedLocation) {
+        selectedLocation.setMap(null); // Remove marker after submission
+        selectedLocation = null;
+
+      }
+      window.location.href = 'index.html';
+
+
+    })
+    .catch(error => {
+      console.error('Error submitting report:', error);
+    });
+  }
+  
+    </script>
+  </head>
+  <body>
+    <h3 id="title">Report Hate Crime</h3>
+    <a href = "./reports.html"><h3>Reports</h3></a>
+    <div id="map"></div>
+
+    <!-- Form to report hate crime -->
+    <div id="crime-form">
+      <h4>Report Hate Crime at Selected Location</h4>
+      <form onsubmit="event.preventDefault(); submitCrime();">
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required><br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="Race">Race</option>
+          <option value="Religion">Religion</option>
+          <option value="Gender Identity">Gender Identity</option>
+          <option value="Sexual Orientation">Sexual Orientation</option>
+          <option value="Ethnicity">Ethnicity</option>
+          <option value="Disability">Disability</option>
+        </select><br><br>
+
+        <!-- Hidden fields to store coordinates -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lng" name="lng">
+
+        <button type="submit">Submit Report</button>
+
+
+      </form>
+
+    </div>
+  </body>
+</html>

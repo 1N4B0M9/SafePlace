@@ -205,97 +205,19 @@
               
 
         // Listen for clicks on the map
-        map.addListener("click", function(event) {
-          if (selectedLocation) {
-            selectedLocation.setMap(null); // Remove previous marker if it exists
-          }
-
-          // Place a new marker at the clicked location
-          selectedLocation = new google.maps.Marker({
-            position: event.latLng,
-            map: map,
-          });
-         
-
-          // Update hidden form fields with coordinates
-          document.getElementById('lat').value = event.latLng.lat();
-          document.getElementById('lng').value = event.latLng.lng();
-
-          // Show the form
-          document.getElementById('crime-form').style.display = 'block';
-
-        });
+       
       }
     
-      function submitCrime() {
-    const reportData = {
-      description: document.getElementById('description').value,
-      date: document.getElementById('date').value,
-      category: document.getElementById('category').value,
-      lat: document.getElementById('lat').value,
-      lng: document.getElementById('lng').value,
-    };
-
-    fetch('/report', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reportData),
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-      // Reset the form and hide it
-      document.getElementById('crime-form').reset();
-      document.getElementById('crime-form').style.display = 'none';
-      if (selectedLocation) {
-        selectedLocation.setMap(null); // Remove marker after submission
-        selectedLocation = null;
-      }
-    })
-    .catch(error => {
-      console.error('Error submitting report:', error);
-    });
-  }
-  
+    
     </script>
   </head>
   <body>
     <h3 id="title">Report Hate Crime</h3>
-    <a href = "./reports.html"><h3>Reports</h3></a>
+    <a href = "./reporting.html"><h3>Reports</h3></a>
     <div id="map"></div>
 
     <!-- Form to report hate crime -->
-    <div id="crime-form">
-      <h4>Report Hate Crime at Selected Location</h4>
-      <form onsubmit="event.preventDefault(); submitCrime();">
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" required><br><br>
-
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br><br>
-
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
-          <option value="" disabled selected>Select a category</option>
-          <option value="Race">Race</option>
-          <option value="Religion">Religion</option>
-          <option value="Gender Identity">Gender Identity</option>
-          <option value="Sexual Orientation">Sexual Orientation</option>
-          <option value="Ethnicity">Ethnicity</option>
-          <option value="Disability">Disability</option>
-        </select><br><br>
-
-        <!-- Hidden fields to store coordinates -->
-        <input type="hidden" id="lat" name="lat">
-        <input type="hidden" id="lng" name="lng">
-
-        <button type="submit">Submit Report</button>
-
-
-      </form>
-
+   
     </div>
   </body>
 </html>

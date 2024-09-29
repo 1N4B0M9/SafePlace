@@ -41,7 +41,18 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(data);
     });
-  } else if (req.url === '/reports' && req.method === 'GET') {
+  } else if (req.url === '/reporting.html') {
+    const filePath = path.join(__dirname, 'public', 'reporting.html');
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        return res.end('Error reading file.\n');
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    });
+  }
+  else if (req.url === '/reports' && req.method === 'GET') {
     try {
       const database = client.db('UserData');
       const reports = await database.collection('UserDataCollection').find({}).toArray();
