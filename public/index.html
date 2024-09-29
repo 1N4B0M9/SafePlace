@@ -87,6 +87,7 @@
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
 
         // Map style
+        //used ChatGPT to learn how to stylize map
         const customMapStyle = [ 
           {
             "elementType": "geometry",
@@ -138,6 +139,7 @@
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
 
         // Fetch reports and plot markers, and create heatmap data points
+
         fetch('/reports')
           .then(response => response.json())
           .then(reports => {

@@ -19,6 +19,7 @@ async function run() {
 
 run();
 //pathways to files
+//used chatGPT with file path errors
 const server = http.createServer(async (req, res) => {
   if (req.url === '/') {
     const filePath = path.join(__dirname, 'public', 'index.html');
@@ -68,7 +69,7 @@ const server = http.createServer(async (req, res) => {
     req.on('data', chunk => {
       body += chunk.toString(); // Convert Buffer to string
     });
-
+    //used chatGPT to help learn how to submit data to mongoDB
     req.on('end', async () => {
       try {
         const reportData = JSON.parse(body);
