@@ -1,7 +1,7 @@
 <p align="center">
  <img src="https://github.com/user-attachments/assets/76c814c5-3bb1-4197-a68d-160bc0ac1bf7" alt="logo_updated_v2" width="200">
 </p>
-<div style="text-align: center;" align="center" font-size: 20px>
+<div style="text-align: center;" align="center" font-weight: bold>
         Harmony Watch
 </div>
 
