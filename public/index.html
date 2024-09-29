@@ -79,9 +79,10 @@
       }
     </style>
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&libraries=visualization&callback=initMap" async defer></script>
     <script>
       let map;
-      let selectedLocation = null;
+      let heatmap;
 
       function initMap() {
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
@@ -122,6 +123,7 @@
           fullscreenControl: false
         });
 
+        // Create legend
         const legend = document.createElement('div');
         legend.id = 'legend';
         legend.style.backgroundColor = '#383838';
@@ -134,13 +136,14 @@
         <div class="legend-item"><span class="legend-color" style="background-color: #27AE60;"></span>Ethnicity</div>
         <div class="legend-item"><span class="legend-color" style="background-color: #E67E22;"></span>Disability</div>
        `;
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
 
-       map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
-
-        // Fetch reports and plot markers
-       fetch('/reports')
+        // Fetch reports and plot markers, and create heatmap data points
+        fetch('/reports')
           .then(response => response.json())
           .then(reports => {
+            const heatmapData = [];
+
             reports.forEach(report => {
               const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
               let markerColor;
@@ -168,6 +171,7 @@
                   markerColor = '#000000';
               }
 
+              // Add marker
               const marker = new google.maps.Marker({
                 position: position,
                 map: map,
@@ -194,13 +198,21 @@
               marker.addListener('click', () => {
                 infoWindow.open(map, marker);
               });
+
+              // Add position to heatmap data
+              heatmapData.push(new google.maps.LatLng(report.lat, report.lng));
+            });
+
+            // Initialize the heatmap layer
+            heatmap = new google.maps.visualization.HeatmapLayer({
+              data: heatmapData,
+              map: map,
+              radius: 25 // Adjust radius as needed
             });
           })
           .catch(error => console.error('Error fetching reports:', error));
       }
     </script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
-
   </head>
   <body>
     <div class="nav-container">
