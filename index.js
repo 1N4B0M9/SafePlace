@@ -18,7 +18,7 @@ async function run() {
 }
 
 run();
-
+//pathways to files
 const server = http.createServer(async (req, res) => {
   if (req.url === '/') {
     const filePath = path.join(__dirname, 'public', 'index.html');
@@ -51,6 +51,7 @@ const server = http.createServer(async (req, res) => {
       res.end(data);
     });
   }
+  //get requests /reports
   else if (req.url === '/reports' && req.method === 'GET') {
     try {
       const database = client.db('UserData');
