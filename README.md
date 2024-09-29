@@ -7,13 +7,13 @@
 # Harmony Watch
 </div>
 
-### &nbsp;Aaron, Nathan, Goldi, and Xavier present Harmony Watch, a convenient and pleasant website to report any incident in the city of Pittsburgh and beyond. 
+### &nbsp;&nbsp;&nbsp;Aaron, Nathan, Goldi, and Xavier present Harmony Watch, a convenient and pleasant website to report any incident in the city of Pittsburgh and beyond. 
 ---
 
 &nbsp;
 
 ## What it does / how does it work?
-&nbsp;Users will be able to navigate a top down sattlelite map and pinpoint an excact location to locate any crime or disturbances. The user will then be prompted to fill out information such as date, type of crime, and other details.
+&nbsp;&nbsp;&nbsp;Users will be able to navigate a top down sattlelite map and pinpoint an excact location to locate any crime or disturbances. The user will then be prompted to fill out information such as date, type of crime, and other details.
 &nbsp;
 
 ## How we built it
@@ -21,7 +21,7 @@
 
 ## Challenges we faced and how we tackled it
 -We were really sleepy—— caffeine
-
+-Heat map integration
 &nbsp;
 
  <div style="text-align: center;" align="center">
