@@ -147,39 +147,39 @@
         </div>
     </div>
 
-    <h3 id="title">Report Hate Crime</h3>
+    <h3 id="title">Report Hate Crime at Selected Location</h3>
+    <div id="crime-form">
+        <form onsubmit="event.preventDefault(); submitCrime();">
+          <label for="description">Description:</label>
+          <input type="text" id="description" name="description" required><br><br>
+  
+          <label for="date">Date:</label>
+          <input type="date" id="date" name="date" required><br><br>
+  
+          <label for="category">Category:</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="Race">Race</option>
+            <option value="Religion">Religion</option>
+            <option value="Gender Identity">Gender Identity</option>
+            <option value="Sexual Orientation">Sexual Orientation</option>
+            <option value="Ethnicity">Ethnicity</option>
+            <option value="Disability">Disability</option>
+          </select><br><br>
+  
+          <!-- Hidden fields to store coordinates -->
+          <input type="hidden" id="lat" name="lat">
+          <input type="hidden" id="lng" name="lng">
+  
+          <button type="submit">Submit Report</button>
+  
+  
+        </form>
+  
+      </div>
     <div id="map"></div>
 
     <!-- Form to report hate crime -->
-    <div id="crime-form">
-      <h4>Report Hate Crime at Selected Location</h4>
-      <form onsubmit="event.preventDefault(); submitCrime();">
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" required><br><br>
-
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br><br>
-
-        <label for="category">Category:</label>
-        <select id="category" name="category" required>
-          <option value="" disabled selected>Select a category</option>
-          <option value="Race">Race</option>
-          <option value="Religion">Religion</option>
-          <option value="Gender Identity">Gender Identity</option>
-          <option value="Sexual Orientation">Sexual Orientation</option>
-          <option value="Ethnicity">Ethnicity</option>
-          <option value="Disability">Disability</option>
-        </select><br><br>
-
-        <!-- Hidden fields to store coordinates -->
-        <input type="hidden" id="lat" name="lat">
-        <input type="hidden" id="lng" name="lng">
-
-        <button type="submit">Submit Report</button>
-
-
-      </form>
-
-    </div>
+   
   </body>
 </html>
