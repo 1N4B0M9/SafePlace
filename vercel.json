@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.js"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": "@mongodb_uri",
+    "MONGODB_DATABASE": "@mongodb_database",
+    "MONGODB_COLLECTION": "@mongodb_collection",
+    "GOOGLE_MAPS_API_KEY": "@google_maps_api_key"
+  }
+}

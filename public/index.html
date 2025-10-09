@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Guardian Pin</title>
+    <title>Harmony Watch</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
     <link rel="stylesheet" href="style.css">
 
@@ -86,8 +86,7 @@
       function initMap() {
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
 
-        // Map style
-        //used ChatGPT to learn how to stylize map
+        // Modern map style with improved contrast and accessibility
         const customMapStyle = [ 
           {
             "elementType": "geometry",
@@ -95,7 +94,11 @@
           },
           {
             "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#000000" }] // Labels color using your specified hex
+            "stylers": [{ "color": "#ffffff" }] // Improved label contrast
+          },
+          {
+            "elementType": "labels.text.stroke",
+            "stylers": [{ "color": "#000000", "weight": 1 }] // Text outline for better readability
           },
           {
             "featureType": "road",
@@ -111,6 +114,11 @@
             "featureType": "poi.park",
             "elementType": "geometry",
             "stylers": [{ "color": "#383838" }] // Parks color
+          },
+          {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [{ "color": "#ffffff" }] // POI labels
           }
         ];
 
@@ -120,7 +128,12 @@
           styles: customMapStyle,
           streetViewControl: false,
           mapTypeControl: false,
-          fullscreenControl: false
+          fullscreenControl: true, // Enable fullscreen for better mobile experience
+          zoomControl: true,
+          scaleControl: true,
+          rotateControl: false,
+          gestureHandling: 'greedy', // Better touch handling
+          mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
         // Create legend
@@ -139,10 +152,17 @@
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
 
         // Fetch reports and plot markers, and create heatmap data points
-
-        fetch('/reports')
-          .then(response => response.json())
+        console.log('Loading reports...');
+        
+        fetch('/api/reports')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then(reports => {
+            console.log(`Loaded ${reports.length} reports`);
             const heatmapData = [];
 
             reports.forEach(report => {
@@ -211,10 +231,24 @@
               radius: 25 // Adjust radius as needed
             });
           })
-          .catch(error => console.error('Error fetching reports:', error));
+          .catch(error => {
+            console.error('Error fetching reports:', error);
+            // Show user-friendly error message
+            const mapElement = document.getElementById('map');
+            mapElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #fda300; font-size: 1.2rem;">Unable to load map data. Please try again later.</div>';
+          });
       }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&libraries=visualization&callback=initMap" async defer></script>
+    <script>
+      // Load Google Maps API with proper async loading
+      (function() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY || 'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak'}&libraries=visualization&callback=initMap&v=weekly&loading=async`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      })();
+    </script>
 
   </head>
   <body>

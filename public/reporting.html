@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Report</title>
+    <title>Harmony Watch</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
     <style>
       /* map size */
@@ -38,10 +38,9 @@
       let selectedLocation = null;
 
       function initMap() {
-        
         const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
 
-        // Map style
+        // Modern map style with improved contrast and accessibility
         const customMapStyle = [ 
           {
             "elementType": "geometry",
@@ -49,7 +48,11 @@
           },
           {
             "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#000000" }] // Labels color using your specified hex
+            "stylers": [{ "color": "#ffffff" }] // Improved label contrast
+          },
+          {
+            "elementType": "labels.text.stroke",
+            "stylers": [{ "color": "#000000", "weight": 1 }] // Text outline for better readability
           },
           {
             "featureType": "road",
@@ -65,6 +68,11 @@
             "featureType": "poi.park",
             "elementType": "geometry",
             "stylers": [{ "color": "#383838" }] // Parks color
+          },
+          {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [{ "color": "#ffffff" }] // POI labels
           }
         ];
 
@@ -73,7 +81,13 @@
           center: centerCoords,
           styles: customMapStyle,
           streetViewControl: false,
-          mapTypeControl: false
+          mapTypeControl: false,
+          fullscreenControl: true, // Enable fullscreen for better mobile experience
+          zoomControl: true,
+          scaleControl: true,
+          rotateControl: false,
+          gestureHandling: 'greedy', // Better touch handling
+          mapTypeId: google.maps.MapTypeId.ROADMAP
         });       
         // Listen for clicks on the map
         map.addListener("click", function(event) {
@@ -107,14 +121,19 @@
       lng: document.getElementById('lng').value,
     };
 
-    fetch('/report', {
+    fetch('/api/report', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(reportData),
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
       alert(data.message);
       // Reset the form and hide it
@@ -123,18 +142,25 @@
       if (selectedLocation) {
         selectedLocation.setMap(null); // Remove marker after submission
         selectedLocation = null;
-
       }
-
-
     })
     .catch(error => {
       console.error('Error submitting report:', error);
+      alert('Failed to submit report. Please try again.');
     });
   }
   
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak&callback=initMap" async defer></script>
+    <script>
+      // Load Google Maps API with proper async loading
+      (function() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY || 'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak'}&callback=initMap&v=weekly&loading=async`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      })();
+    </script>
 
   </head>
   <body>

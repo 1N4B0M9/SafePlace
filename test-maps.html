@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps API Test</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps API Test</h1>
+    <div id="status" class="status">Loading Google Maps API...</div>
+    <div id="map"></div>
+    
+    <script>
+        let map;
+        let statusDiv = document.getElementById('status');
+        
+        function initMap() {
+            // This function will be called when the API loads successfully
+            statusDiv.className = 'status success';
+            statusDiv.textContent = '✅ Google Maps API loaded successfully!';
+            
+            // Create a simple map
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 10,
+                center: { lat: 40.4321, lng: -79.9585 },
+            });
+        }
+        
+        function handleError() {
+            statusDiv.className = 'status error';
+            statusDiv.textContent = '❌ Google Maps API failed to load. Check console for errors.';
+        }
+        
+        // Load Google Maps API
+        (function() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY || 'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak'}&callback=initMap&v=weekly&loading=async`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = handleError;
+            document.head.appendChild(script);
+        })();
+    </script>
+</body>
+</html>
