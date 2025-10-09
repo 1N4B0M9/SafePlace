@@ -83,7 +83,7 @@ module.exports = async (req, res) => {
       if (data) {
         // Inject Google Maps API key into HTML
         const htmlWithApiKey = data.toString().replace(
-          'window.GOOGLE_MAPS_API_KEY || \'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak\'',
+          'window.GOOGLE_MAPS_API_KEY',
           `'${process.env.GOOGLE_MAPS_API_KEY}'`
         );
         res.setHeader('Content-Type', 'text/html');
