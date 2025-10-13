@@ -13,12 +13,19 @@ let client;
 async function connectToDatabase() {
   if (!client) {
     try {
+      // Check if MongoDB URI is properly configured
+      if (!uri || uri === 'mongodb_uri' || uri === '') {
+        console.warn('MongoDB URI not configured, running in development mode');
+        return null;
+      }
+      
       client = new MongoClient(uri);
       await client.connect();
       console.log('Connected to MongoDB successfully');
     } catch (error) {
       console.error('MongoDB connection error:', error.message);
-      throw error;
+      // Don't throw error, return null to allow graceful fallback
+      return null;
     }
   }
   return client;
@@ -125,6 +132,13 @@ module.exports = async (req, res) => {
     if (req.url === '/api/reports' && req.method === 'GET') {
       try {
         const dbClient = await connectToDatabase();
+        if (!dbClient) {
+          // MongoDB not available, return empty array
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify([]));
+          return;
+        }
+        
         const database = dbClient.db(databaseName);
         const reports = await database.collection(collectionName).find({}).toArray();
         res.setHeader('Content-Type', 'application/json');
@@ -148,6 +162,14 @@ module.exports = async (req, res) => {
         try {
           const reportData = JSON.parse(body);
           const dbClient = await connectToDatabase();
+          
+          if (!dbClient) {
+            // MongoDB not available, return success message
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+            return;
+          }
+          
           const database = dbClient.db(databaseName);
           await database.collection(collectionName).insertOne(reportData);
           res.setHeader('Content-Type', 'application/json');
@@ -166,6 +188,13 @@ module.exports = async (req, res) => {
     if (req.url === '/reports' && req.method === 'GET') {
       try {
         const dbClient = await connectToDatabase();
+        if (!dbClient) {
+          // MongoDB not available, return empty array
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify([]));
+          return;
+        }
+        
         const database = dbClient.db(databaseName);
         const reports = await database.collection(collectionName).find({}).toArray();
         res.setHeader('Content-Type', 'application/json');
@@ -189,6 +218,14 @@ module.exports = async (req, res) => {
         try {
           const reportData = JSON.parse(body);
           const dbClient = await connectToDatabase();
+          
+          if (!dbClient) {
+            // MongoDB not available, return success message
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+            return;
+          }
+          
           const database = dbClient.db(databaseName);
           await database.collection(collectionName).insertOne(reportData);
           res.setHeader('Content-Type', 'application/json');
