@@ -34,7 +34,9 @@ async function connectToDatabase() {
 // Helper function to read static files
 function readStaticFile(filePath) {
   try {
-    return fs.readFileSync(path.join(__dirname, 'public', filePath));
+    // Use process.cwd() for Vercel compatibility instead of __dirname
+    const basePath = process.env.VERCEL ? process.cwd() : __dirname;
+    return fs.readFileSync(path.join(basePath, 'public', filePath));
   } catch (error) {
     console.error(`Error reading file ${filePath}:`, error);
     return null;
@@ -43,14 +45,33 @@ function readStaticFile(filePath) {
 
 // Main handler function for Vercel
 module.exports = async (req, res) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  
+  // Set timeout to prevent hanging
+  const timeout = setTimeout(() => {
+    if (!res.headersSent) {
+      console.error('Request timeout');
+      res.writeHead(504, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Request timeout' }));
+    }
+  }, 25000); // 25 second timeout
+
+  // Helper function to clear timeout and send response
+  const sendResponse = (statusCode, headers, body) => {
+    clearTimeout(timeout);
+    if (!res.headersSent) {
+      res.writeHead(statusCode, headers);
+      res.end(body);
+    }
+  };
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
-    res.writeHead(200);
-    res.end();
+    sendResponse(200, {}, '');
     return;
   }
 
@@ -59,11 +80,9 @@ module.exports = async (req, res) => {
     if (req.url === '/' || req.url === '/index.html') {
       const data = readStaticFile('index.html');
       if (data) {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/html' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -71,11 +90,9 @@ module.exports = async (req, res) => {
     if (req.url === '/reports.html') {
       const data = readStaticFile('reports.html');
       if (data) {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/html' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -83,11 +100,9 @@ module.exports = async (req, res) => {
     if (req.url === '/about.html') {
       const data = readStaticFile('about.html');
       if (data) {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/html' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -95,11 +110,9 @@ module.exports = async (req, res) => {
     if (req.url === '/reporting.html') {
       const data = readStaticFile('reporting.html');
       if (data) {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/html' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -107,11 +120,9 @@ module.exports = async (req, res) => {
     if (req.url === '/style.css') {
       const data = readStaticFile('style.css');
       if (data) {
-        res.setHeader('Content-Type', 'text/css');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/css' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -119,11 +130,9 @@ module.exports = async (req, res) => {
     if (req.url === '/test-maps.html') {
       const data = readStaticFile('test-maps.html');
       if (data) {
-        res.setHeader('Content-Type', 'text/html');
-        res.end(data);
+        sendResponse(200, { 'Content-Type': 'text/html' }, data);
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File not found');
+        sendResponse(404, { 'Content-Type': 'text/plain' }, 'File not found');
       }
       return;
     }
@@ -134,20 +143,17 @@ module.exports = async (req, res) => {
         const dbClient = await connectToDatabase();
         if (!dbClient) {
           // MongoDB not available, return empty array
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify([]));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
           return;
         }
         
         const database = dbClient.db(databaseName);
         const reports = await database.collection(collectionName).find({}).toArray();
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(reports));
+        sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify(reports));
       } catch (error) {
         console.error('Error fetching reports:', error);
         // Return empty array for development when DB is not available
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify([]));
+        sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
       }
       return;
     }
@@ -165,20 +171,17 @@ module.exports = async (req, res) => {
           
           if (!dbClient) {
             // MongoDB not available, return success message
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+            sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
             return;
           }
           
           const database = dbClient.db(databaseName);
           await database.collection(collectionName).insertOne(reportData);
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ message: 'Report submitted successfully!' }));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully!' }));
         } catch (error) {
           console.error('Error saving report:', error);
           // For development, return success even if DB is not available
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
         }
       });
       return;
@@ -190,20 +193,17 @@ module.exports = async (req, res) => {
         const dbClient = await connectToDatabase();
         if (!dbClient) {
           // MongoDB not available, return empty array
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify([]));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
           return;
         }
         
         const database = dbClient.db(databaseName);
         const reports = await database.collection(collectionName).find({}).toArray();
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(reports));
+        sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify(reports));
       } catch (error) {
         console.error('Error fetching reports:', error);
         // Return empty array for development when DB is not available
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify([]));
+        sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify([]));
       }
       return;
     }
@@ -221,33 +221,38 @@ module.exports = async (req, res) => {
           
           if (!dbClient) {
             // MongoDB not available, return success message
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+            sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
             return;
           }
           
           const database = dbClient.db(databaseName);
           await database.collection(collectionName).insertOne(reportData);
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ message: 'Report submitted successfully!' }));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully!' }));
         } catch (error) {
           console.error('Error saving report:', error);
           // For development, return success even if DB is not available
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
+          sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ message: 'Report submitted successfully! (Development mode - not saved to database)' }));
         }
       });
       return;
     }
 
     // 404 for any other routes
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('404 Not Found');
+    sendResponse(404, { 'Content-Type': 'text/plain' }, '404 Not Found');
 
   } catch (error) {
     console.error('Server error:', error);
-    res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end('Internal Server Error');
+    console.error('Error stack:', error.stack);
+    
+    // Ensure response hasn't been sent already
+    if (!res.headersSent) {
+      clearTimeout(timeout);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ 
+        error: 'Internal Server Error', 
+        message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong' 
+      }));
+    }
   }
 };
 
