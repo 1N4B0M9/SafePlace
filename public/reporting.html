@@ -3,11 +3,20 @@
   <head>
     <title>Harmony Watch</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
       /* map size */
       #map {
         height: 400px;
         width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
 
       /* form style */
@@ -38,77 +47,40 @@
       let selectedLocation = null;
 
       function initMap() {
-        const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
+        const centerCoords = [40.4321, -79.9585]; // Default center (Oakland) - Leaflet uses [lat, lng]
 
-        // Modern map style with improved contrast and accessibility
-        const customMapStyle = [ 
-          {
-            "elementType": "geometry",
-            "stylers": [{ "color": "#2d2d2d" }] // Background land color
-          },
-          {
-            "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#ffffff" }] // Improved label contrast
-          },
-          {
-            "elementType": "labels.text.stroke",
-            "stylers": [{ "color": "#000000", "weight": 1 }] // Text outline for better readability
-          },
-          {
-            "featureType": "road",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#B36900" }] // Road color
-          },
-          {
-            "featureType": "water",
-            "elementType": "geometry.fill",
-            "stylers": [{ "color": "#1d2c4d" }] // Water color
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#383838" }] // Parks color
-          },
-          {
-            "featureType": "poi",
-            "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#ffffff" }] // POI labels
-          }
-        ];
+        // Initialize the map with CartoDB Dark Matter tiles for dark theme
+        map = L.map('map').setView(centerCoords, 12);
 
-        map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 12,
-          center: centerCoords,
-          styles: customMapStyle,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: true, // Enable fullscreen for better mobile experience
-          zoomControl: true,
-          scaleControl: true,
-          rotateControl: false,
-          gestureHandling: 'greedy', // Better touch handling
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });       
+        // Add CartoDB Dark Matter tiles (dark theme)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
+
         // Listen for clicks on the map
-        map.addListener("click", function(event) {
+        map.on('click', function(event) {
           if (selectedLocation) {
-            selectedLocation.setMap(null); // Remove previous marker if it exists
+            map.removeLayer(selectedLocation); // Remove previous marker if it exists
           }
 
-          // Place a new marker at the clicked location
-          selectedLocation = new google.maps.Marker({
-            position: event.latLng,
-            map: map,
-          });
-         
+          // Place a new marker at the clicked location with custom styling
+          selectedLocation = L.circleMarker([event.latlng.lat, event.latlng.lng], {
+            radius: 8,
+            fillColor: '#fda300',
+            color: '#FFFFFF',
+            weight: 2,
+            opacity: 0.9,
+            fillOpacity: 0.8
+          }).addTo(map);
 
           // Update hidden form fields with coordinates
-          document.getElementById('lat').value = event.latLng.lat();
-          document.getElementById('lng').value = event.latLng.lng();
+          document.getElementById('lat').value = event.latlng.lat;
+          document.getElementById('lng').value = event.latlng.lng;
 
           // Show the form
           document.getElementById('crime-form').style.display = 'block';
-
         });
       }
     
@@ -140,7 +112,7 @@
       document.getElementById('crime-form').reset();
       document.getElementById('crime-form').style.display = 'none';
       if (selectedLocation) {
-        selectedLocation.setMap(null); // Remove marker after submission
+        map.removeLayer(selectedLocation); // Remove marker after submission
         selectedLocation = null;
       }
     })
@@ -152,14 +124,8 @@
   
     </script>
     <script>
-      // Load Google Maps API with proper async loading
-      (function() {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY || 'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak'}&callback=initMap&v=weekly&loading=async`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      })();
+      // Initialize map when page loads
+      document.addEventListener('DOMContentLoaded', initMap);
     </script>
 
   </head>
@@ -169,6 +135,7 @@
         <div class="right-links">
             <a href="reports.html" id="navButton">Directory</a>
             <a href="reporting.html" id="reportButton">Report</a>
+            <a href="about.html">About</a>
         </div>
     </div>
 

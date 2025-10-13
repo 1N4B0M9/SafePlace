@@ -52,13 +52,8 @@ module.exports = async (req, res) => {
     if (req.url === '/' || req.url === '/index.html') {
       const data = readStaticFile('index.html');
       if (data) {
-        // Inject Google Maps API key into HTML
-        const htmlWithApiKey = data.toString().replace(
-          'window.GOOGLE_MAPS_API_KEY || \'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak\'',
-          `'${process.env.GOOGLE_MAPS_API_KEY}'`
-        );
         res.setHeader('Content-Type', 'text/html');
-        res.end(htmlWithApiKey);
+        res.end(data);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('File not found');
@@ -78,16 +73,23 @@ module.exports = async (req, res) => {
       return;
     }
 
+    if (req.url === '/about.html') {
+      const data = readStaticFile('about.html');
+      if (data) {
+        res.setHeader('Content-Type', 'text/html');
+        res.end(data);
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('File not found');
+      }
+      return;
+    }
+
     if (req.url === '/reporting.html') {
       const data = readStaticFile('reporting.html');
       if (data) {
-        // Inject Google Maps API key into HTML
-        const htmlWithApiKey = data.toString().replace(
-          'window.GOOGLE_MAPS_API_KEY',
-          `'${process.env.GOOGLE_MAPS_API_KEY}'`
-        );
         res.setHeader('Content-Type', 'text/html');
-        res.end(htmlWithApiKey);
+        res.end(data);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('File not found');
@@ -110,13 +112,8 @@ module.exports = async (req, res) => {
     if (req.url === '/test-maps.html') {
       const data = readStaticFile('test-maps.html');
       if (data) {
-        // Inject Google Maps API key into HTML
-        const htmlWithApiKey = data.toString().replace(
-          'window.GOOGLE_MAPS_API_KEY || \'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak\'',
-          `'${process.env.GOOGLE_MAPS_API_KEY}'`
-        );
         res.setHeader('Content-Type', 'text/html');
-        res.end(htmlWithApiKey);
+        res.end(data);
       } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('File not found');

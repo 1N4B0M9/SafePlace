@@ -4,6 +4,15 @@
     <title>Harmony Watch</title>
     <link rel="shortcut icon" type="image/png" href="https://github.com/user-attachments/assets/9da70c57-1d11-4778-a9ed-ce04d55dcd43">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Leaflet Heat Plugin -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
     <style>
       /* General body and html styles */
@@ -77,79 +86,73 @@
         border-radius: 50%;
         margin-right: 10px;
       }
+
+      /* Custom popup styling */
+      .custom-popup .leaflet-popup-content-wrapper {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 1px solid #e0e0e0;
+      }
+
+      .custom-popup .leaflet-popup-tip {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+      }
+
+      /* Improve map container styling */
+      #map {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Smooth transitions for markers */
+      .leaflet-interactive {
+        transition: all 0.2s ease;
+      }
+
+      .leaflet-interactive:hover {
+        transform: scale(1.1);
+      }
     </style>
 
     <script>
       let map;
-      let heatmap;
+      let heatmapLayer;
 
       function initMap() {
-        const centerCoords = { lat: 40.4321, lng: -79.9585 }; // Default center (Oakland)
+        const centerCoords = [40.4321, -79.9585]; // Default center (Oakland) - Leaflet uses [lat, lng]
 
-        // Modern map style with improved contrast and accessibility
-        const customMapStyle = [ 
-          {
-            "elementType": "geometry",
-            "stylers": [{ "color": "#2d2d2d" }] // Background land color
-          },
-          {
-            "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#ffffff" }] // Improved label contrast
-          },
-          {
-            "elementType": "labels.text.stroke",
-            "stylers": [{ "color": "#000000", "weight": 1 }] // Text outline for better readability
-          },
-          {
-            "featureType": "road",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#B36900" }] // Road color
-          },
-          {
-            "featureType": "water",
-            "elementType": "geometry.fill",
-            "stylers": [{ "color": "#1d2c4d" }] // Water color
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "geometry",
-            "stylers": [{ "color": "#383838" }] // Parks color
-          },
-          {
-            "featureType": "poi",
-            "elementType": "labels.text.fill",
-            "stylers": [{ "color": "#ffffff" }] // POI labels
-          }
-        ];
+        // Initialize the map with CartoDB Dark Matter tiles for dark theme
+        map = L.map('map').setView(centerCoords, 12);
 
-        map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 12,
-          center: centerCoords,
-          styles: customMapStyle,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: true, // Enable fullscreen for better mobile experience
-          zoomControl: true,
-          scaleControl: true,
-          rotateControl: false,
-          gestureHandling: 'greedy', // Better touch handling
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+        // Add CartoDB Dark Matter tiles (dark theme)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(map);
 
         // Create legend
-        const legend = document.createElement('div');
-        legend.id = 'legend';
-        legend.style.backgroundColor = '#383838';
-        legend.innerHTML = `
-        <h4>Legend</h4>
-        <div class="legend-item"><span class="legend-color" style="background-color: #F1C40F;"></span>Race</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #FF5733;"></span>Religion</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #8E44AD;"></span>Gender Identity</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #3498DB;"></span>Sexual Orientation</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #27AE60;"></span>Ethnicity</div>
-        <div class="legend-item"><span class="legend-color" style="background-color: #E67E22;"></span>Disability</div>
-       `;
-        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+        const legend = L.control({position: 'bottomleft'});
+        legend.onAdd = function (map) {
+          const div = L.DomUtil.create('div', 'legend');
+          div.style.backgroundColor = '#383838';
+          div.style.padding = '10px';
+          div.style.borderRadius = '8px';
+          div.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.3)';
+          div.innerHTML = `
+            <h4 style="margin: 0; padding-bottom: 5px; color: #fda300;">Legend</h4>
+            <div class="legend-item"><span class="legend-color" style="background-color: #F1C40F;"></span>Race</div>
+            <div class="legend-item"><span class="legend-color" style="background-color: #FF5733;"></span>Religion</div>
+            <div class="legend-item"><span class="legend-color" style="background-color: #8E44AD;"></span>Gender Identity</div>
+            <div class="legend-item"><span class="legend-color" style="background-color: #3498DB;"></span>Sexual Orientation</div>
+            <div class="legend-item"><span class="legend-color" style="background-color: #27AE60;"></span>Ethnicity</div>
+            <div class="legend-item"><span class="legend-color" style="background-color: #E67E22;"></span>Disability</div>
+          `;
+          return div;
+        };
+        legend.addTo(map);
 
         // Fetch reports and plot markers, and create heatmap data points
         console.log('Loading reports...');
@@ -166,12 +169,12 @@
             const heatmapData = [];
 
             reports.forEach(report => {
-              const position = { lat: parseFloat(report.lat), lng: parseFloat(report.lng) };
+              const position = [parseFloat(report.lat), parseFloat(report.lng)];
               let markerColor;
 
               switch (report.category) {
                 case 'Race':
-                  markerColor = '#F1c40F';
+                  markerColor = '#F1C40F';
                   break;
                 case 'Religion':
                   markerColor = '#FF5733';
@@ -192,44 +195,49 @@
                   markerColor = '#000000';
               }
 
-              // Add marker
-              const marker = new google.maps.Marker({
-                position: position,
-                map: map,
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 8,
-                  fillColor: markerColor,
-                  fillOpacity: 1,
-                  strokeWeight: 1,
-                  strokeColor: '#FFFFFF'
-                },
-                title: report.description // Tooltip on marker
+              // Add marker using circle marker for better visibility
+              const marker = L.circleMarker(position, {
+                radius: 6,
+                fillColor: markerColor,
+                color: '#FFFFFF',
+                weight: 2,
+                opacity: 0.9,
+                fillOpacity: 0.8
+              }).addTo(map);
+
+              // Add popup with report details
+              const popupContent = `
+                <div style="color: #333; font-family: 'Poppins', sans-serif; font-size: 14px; line-height: 1.4;">
+                  <div style="font-weight: bold; color: #fda300; margin-bottom: 8px; font-size: 16px;">${report.category}</div>
+                  <div style="margin-bottom: 6px;"><strong>Description:</strong> ${report.description}</div>
+                  <div style="margin-bottom: 6px;"><strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}</div>
+                  <div style="font-size: 12px; color: #666;"><strong>Location:</strong> (${report.lat}, ${report.lng})</div>
+                </div>
+              `;
+              marker.bindPopup(popupContent, {
+                className: 'custom-popup',
+                maxWidth: 250
               });
 
-              const infoWindow = new google.maps.InfoWindow({
-                content: `<div>
-                  <strong>Description:</strong> ${report.description}<br>
-                  <strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}<br>
-                  <strong>Category:</strong> ${report.category}<br>
-                  <strong>Location:</strong> (${report.lat}, ${report.lng})
-                </div>`
-              });
-
-              marker.addListener('click', () => {
-                infoWindow.open(map, marker);
-              });
-
-              // Add position to heatmap data
-              heatmapData.push(new google.maps.LatLng(report.lat, report.lng));
+              // Add position to heatmap data (leaflet.heat expects [lat, lng, intensity])
+              heatmapData.push([parseFloat(report.lat), parseFloat(report.lng), 1]);
             });
 
-            // Initialize the heatmap layer
-            heatmap = new google.maps.visualization.HeatmapLayer({
-              data: heatmapData,
-              map: map,
-              radius: 25 // Adjust radius as needed
-            });
+            // Initialize the heatmap layer using leaflet.heat
+            if (heatmapData.length > 0) {
+              heatmapLayer = L.heatLayer(heatmapData, {
+                radius: 20,
+                blur: 20,
+                maxZoom: 17,
+                gradient: {
+                  0.2: '#1d2c4d',  // Dark blue
+                  0.4: '#2c3e50',  // Darker blue
+                  0.6: '#3498DB',  // Blue
+                  0.8: '#F1C40F',  // Yellow
+                  1.0: '#FF5733'   // Orange-red
+                }
+              }).addTo(map);
+            }
           })
           .catch(error => {
             console.error('Error fetching reports:', error);
@@ -238,16 +246,9 @@
             mapElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #fda300; font-size: 1.2rem;">Unable to load map data. Please try again later.</div>';
           });
       }
-    </script>
-    <script>
-      // Load Google Maps API with proper async loading
-      (function() {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY || 'AIzaSyDlJzZPVSJwtk99JUKoshFwG8K96ppJHak'}&libraries=visualization&callback=initMap&v=weekly&loading=async`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      })();
+
+      // Initialize map when page loads
+      document.addEventListener('DOMContentLoaded', initMap);
     </script>
 
   </head>
@@ -257,6 +258,7 @@
       <div class="right-links">
         <a href="reports.html">Directory</a>
         <a href="reporting.html" id="reportButton">Report</a>
+        <a href="about.html">About</a>
       </div>
     </div>
 
