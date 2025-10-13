@@ -1,7 +1,18 @@
-require('dotenv').config();
+// Module initialization logging
+console.log('SafePlace serverless function initializing...');
+console.log('Node version:', process.version);
+console.log('Platform:', process.platform);
+
+// Only load dotenv in development
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const { MongoClient } = require("mongodb");
 const fs = require('fs');
 const path = require('path');
+
+console.log('Dependencies loaded successfully');
 
 // MongoDB configuration from environment variables
 const uri = process.env.MONGODB_URI;
@@ -19,12 +30,19 @@ async function connectToDatabase() {
         return null;
       }
       
-      client = new MongoClient(uri);
+      console.log('Attempting to connect to MongoDB...');
+      client = new MongoClient(uri, {
+        serverSelectionTimeoutMS: 5000, // 5 second timeout
+        connectTimeoutMS: 5000,
+        socketTimeoutMS: 5000
+      });
       await client.connect();
       console.log('Connected to MongoDB successfully');
     } catch (error) {
       console.error('MongoDB connection error:', error.message);
+      console.error('MongoDB connection error details:', error);
       // Don't throw error, return null to allow graceful fallback
+      client = null; // Reset client on error
       return null;
     }
   }
@@ -45,7 +63,15 @@ function readStaticFile(filePath) {
 
 // Main handler function for Vercel
 module.exports = async (req, res) => {
+  // Basic validation
+  if (!req || !res) {
+    console.error('Invalid request or response object');
+    return;
+  }
+
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('Vercel environment:', process.env.VERCEL);
   
   // Set timeout to prevent hanging
   const timeout = setTimeout(() => {
@@ -72,6 +98,16 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') {
     sendResponse(200, {}, '');
+    return;
+  }
+
+  // Health check endpoint
+  if (req.url === '/health' || req.url === '/api/health') {
+    sendResponse(200, { 'Content-Type': 'application/json' }, JSON.stringify({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV 
+    }));
     return;
   }
 
@@ -266,3 +302,5 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`Server running at http://localhost:${port}/`);
   });
 }
+
+console.log('SafePlace serverless function module loaded successfully');
